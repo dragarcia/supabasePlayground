@@ -1,0 +1,52 @@
+# docker-compose.yml
+
+version: '3'
+services:
+  kong:
+    build:
+      context: ./kong
+    restart: on-failure
+    environment:
+      KONG_DECLARATIVE_CONFIG: /var/lib/kong/kong.yml
+    ports:
+      - "8000:8000/tcp"
+      - "8443:8443/tcp"
+  rest:
+    image: postgrest/postgrest
+    restart: always
+    environment:
+      PGRST_DB_URI: postgres://postgres:postgres@db:5432/postgres
+      PGRST_DB_SCHEMA: public
+      PGRST_DB_ANON_ROLE: postgres
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+  realtime:
+    image: supabase/realtime
+    restart: on-failure
+    environment:
+      DB_HOST: db
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_PORT: 5432
+      PORT: 4000
+      HOSTNAME: localhost
+      APP_PORT: 4000
+      APP_HOSTNAME: localhost
+      SECRET_KEY_BASE: SOMETHING_SUPER_SECRET
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+  db:
+    build: ./postgres
+    ports:
+      - "6543:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: db
+      POSTGRES_DB: postgres
+      POSTGRES_PORT: 5432

@@ -1,0 +1,56 @@
+_format_version: '1.1'
+
+services:
+  - name: rest-v1
+    _comment: 'PosgREST: /rest/v1/* -> http://rest:3000/*'
+    url: http://rest:3000/
+    routes:
+      - name: rest-v1-all
+        strip_path: true
+        paths:
+          - /rest/v1/
+    plugins:
+      - name: cors
+      - name: key-auth
+        config:
+          hide_credentials: true
+  - name: realtime-v1
+    _comment: 'Realtime: /realtime/v1/* -> ws://realtime:4000/socket/*'
+    url: http://realtime:4000/socket/
+    routes:
+      - name: realtime-v1-all
+        strip_path: true
+        paths:
+          - /realtime/v1/
+    plugins:
+      # - name: request-transformer
+      #   config:
+      #     add.headers:
+      #       - Connection:keep-alive
+      - name: cors
+      - name: key-auth
+        config:
+          hide_credentials: true
+
+consumers:
+- username: example-user
+  keyauth_credentials:
+    - key: LmT3VFkGhD # In use - Nimbus. Please don't delete until we move Nimbus over to new infra
+- username: blockpunk-key
+  keyauth_credentials:
+    - key: bhiGUYVHdhui7H
+- username: adam-key
+  keyauth_credentials:
+    - key: hIvAcHANcHeLeCTuroUS
+- username: umar-key
+  keyauth_credentials:
+    - key: oUsTabrecKToWNSitaLi
+- username: nivoda-key
+  keyauth_credentials:
+    - key: eNtiBINAIRAthYMPaNti
+- username: arena-key
+  keyauth_credentials:
+    - key: RAthYMPaNtieNtiBINAI
+- username: supabase-docs
+  keyauth_credentials:
+    - key: public-key-bOYapLADERfE
